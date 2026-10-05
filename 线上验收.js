@@ -1,5 +1,5 @@
 async (page) => {
-  const url='https://zxshm.github.io/chapter-21-birthday-20261005/';
+  const url='https://zxshm.github.io/chapter-21-birthday-20261005/?v=2';
   const report={url,checks:[],errors:[]};
   const check=(name,ok,detail)=>{report.checks.push({name,ok,detail});if(!ok)throw new Error(name+': '+JSON.stringify(detail));};
   const context=await page.context().browser().newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,deviceScaleFactor:1});
@@ -8,6 +8,8 @@ async (page) => {
   mobile.on('console',msg=>{if(msg.type()==='error')report.errors.push(msg.text());});
   const response=await mobile.goto(url,{waitUntil:'networkidle'});
   check('公网HTTPS返回200',response.status()===200,response.status());
+  check('生日特刊新版已加载',await mobile.locator('.hero-copy').count()===1);
+  check('新版样式已加载',await mobile.locator('.hero').evaluate(e=>getComputedStyle(e).display)==='grid');
   check('开场第一句',(await mobile.locator('#intro-message').textContent()).includes('很重要'));
   await mobile.waitForTimeout(1600);
   check('开场第二句',(await mobile.locator('#intro-message').textContent()).includes('21 岁'));
