@@ -52,7 +52,7 @@ async (page) => {
     const begin=Date.now();let popped=0;
     while(Date.now()-begin<16000){
       if(await mobile.locator('#start-game').isEnabled())break;
-      if(popped<target){const balloon=mobile.getByRole('button',{name:'戳掉烦恼气球'}).first();if(await balloon.count()){await balloon.tap();popped++;}}
+      if(popped<target){const balloon=mobile.getByRole('button',{name:'戳掉烦恼气球'}).first();if(await balloon.count()){const box=await balloon.boundingBox();if(box){await mobile.touchscreen.tap(box.x+box.width/2,box.y+box.height/2);popped=Number(await mobile.locator('#score').textContent());}}}
       await mobile.waitForTimeout(100);
     }
     await mobile.waitForTimeout(200);
