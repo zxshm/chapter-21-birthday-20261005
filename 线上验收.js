@@ -71,5 +71,5 @@ async (page) => {
   await page.screenshot({path:'work/online-desktop.png',fullPage:true});
   check('控制台无错误',report.errors.length===0,report.errors);
   await context.close();
-  console.log(JSON.stringify(report));
+  return report;
 }
