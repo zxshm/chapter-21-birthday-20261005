@@ -23,7 +23,7 @@ function enterSite() {
   $('#site').inert = false;
   document.body.classList.remove('intro-open');
   $('.brand').focus({preventScroll:true});
-  celebrate(50);
+
 }
 $('#enter').addEventListener('click',enterSite);
 $('#intro').addEventListener('keydown', event => {if(event.key === 'Tab'){event.preventDefault();$('#enter').focus();}if(event.key==='Escape')enterSite();});
@@ -34,23 +34,23 @@ showIntro();
 $('#letter-body').textContent = content.letter;
 function photoView(photo,index) {
   if(photo.src) {
-    const img = document.createElement('img'); img.className='photo-img';img.src=photo.src;img.alt=photo.caption;img.loading='lazy';
+    const img = document.createElement('img'); img.className='photo-img';img.src=photo.src;img.alt=photo.alt||photo.caption;img.loading='lazy';
     img.addEventListener('error',()=>img.replaceWith(placeholder(photo,index)),{once:true});return img;
   }
   return placeholder(photo,index);
 }
 function placeholder(photo,index){
   const art=document.createElement('div');art.className=`photo-art ${photo.color}`;
-  [['photo-tag',`MEMORY / ${String(index+1).padStart(2,'0')}`],['symbol',photo.symbol],['word',photo.word],['note',photo.note]].forEach(([className,text])=>{const span=document.createElement('span');span.className=className;span.textContent=text;art.append(span);});return art;
+  [['photo-tag','留给一张照片'],['symbol',String(index+1).padStart(2,'0')],['word',photo.word],['note','']].forEach(([className,text])=>{const span=document.createElement('span');span.className=className;span.textContent=text;art.append(span);});return art;
 }
-content.photos.forEach((photo,index)=>{const button=document.createElement('button');button.className='polaroid';button.style.setProperty('--rotation',`${[-4,2,-2,3,-3,4,-2,3,-3][index]}deg`);button.setAttribute('aria-label',`查看照片${index+1}：${photo.caption}`);button.append(photoView(photo,index));const caption=document.createElement('span');caption.className='polaroid-caption';caption.textContent=photo.caption;button.append(caption);button.addEventListener('click',()=>openPhoto(index));$('#gallery').append(button);});
+content.photos.forEach((photo,index)=>{const button=document.createElement('button');button.className='polaroid';button.style.setProperty('--rotation',`${[-1.3,.6,-.8,1.1,-.5,.9,-.6,.8,-1][index]}deg`);button.setAttribute('aria-label',`查看照片${index+1}：${photo.caption}`);button.append(photoView(photo,index));const caption=document.createElement('span');caption.className='polaroid-caption';caption.dataset.number=String(index+1).padStart(2,'0');caption.textContent=photo.caption;button.append(caption);button.addEventListener('click',()=>openPhoto(index));$('#gallery').append(button);});
 let currentPhoto=0;
 function openPhoto(index){currentPhoto=(index+content.photos.length)%content.photos.length;$('#photo-large').replaceChildren(photoView(content.photos[currentPhoto],currentPhoto));$('#photo-caption').textContent=content.photos[currentPhoto].caption;$('#photo-count').textContent=`${currentPhoto+1} / ${content.photos.length}`;if(!$('#photo-dialog').open)$('#photo-dialog').showModal();}
 $('#prev-photo').addEventListener('click',()=>openPhoto(currentPhoto-1));$('#next-photo').addEventListener('click',()=>openPhoto(currentPhoto+1));
 $('#photo-dialog').addEventListener('keydown',event=>{if(event.key==='ArrowLeft')openPhoto(currentPhoto-1);if(event.key==='ArrowRight')openPhoto(currentPhoto+1);});
 document.querySelectorAll('dialog').forEach(dialog=>{dialog.querySelector('.dialog-close').addEventListener('click',()=>dialog.close());dialog.addEventListener('click',event=>{const r=dialog.getBoundingClientRect();if(event.target===dialog&&(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom))dialog.close();});});
 
-function celebrate(count=65){if(reducedMotion)return;const colors=['#b39bc3','#e4a8bb','#d9ba72','#a8bcad','#eed2df'];for(let i=0;i<count;i++){const bit=document.createElement('span');bit.className='confetto';bit.style.setProperty('--left',`${Math.random()*100}%`);bit.style.setProperty('--color',colors[i%colors.length]);bit.style.setProperty('--duration',`${2+Math.random()*1.5}s`);bit.style.setProperty('--delay',`${Math.random()*.45}s`);bit.style.setProperty('--turn',`${Math.random()*360}deg`);bit.style.setProperty('--drift',`${(Math.random()-.5)*160}px`);if(i%5===0){bit.textContent='✦';bit.style.background='none';bit.style.color=colors[i%colors.length];}$('#confetti').append(bit);setTimeout(()=>bit.remove(),4300);}}
+function celebrate(count=65){if(reducedMotion)return;const colors=['#a7969c','#bb9e9d','#c5b185','#d6c9bd','#8d807b'];for(let i=0;i<count;i++){const bit=document.createElement('span');bit.className='confetto';bit.style.setProperty('--left',`${Math.random()*100}%`);bit.style.setProperty('--color',colors[i%colors.length]);bit.style.setProperty('--duration',`${2+Math.random()*1.5}s`);bit.style.setProperty('--delay',`${Math.random()*.45}s`);bit.style.setProperty('--turn',`${Math.random()*360}deg`);bit.style.setProperty('--drift',`${(Math.random()-.5)*160}px`);if(i%5===0){bit.textContent='✦';bit.style.background='none';bit.style.color=colors[i%colors.length];}$('#confetti').append(bit);setTimeout(()=>bit.remove(),4300);}}
 
 let score=0,playing=false,endAt=0,gameTimer=null,spawnTimer=null,balloonSerial=0;
 const balloonArea=$('#balloon-area');
